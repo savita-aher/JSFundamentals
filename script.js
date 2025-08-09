@@ -104,11 +104,49 @@ for (let i = 0; i < AssignmentGroup.assignments.length; i++) {
   }
 }
 
-  
+  // Build assignment lookup
+  const assignmentMap = {};
+  for (let i = 0; i < validAssignments.length; i++) {
+    const assignment = validAssignments[i];
+    assignmentMap[assignment.id] = assignment;
+  }
+
+  // Group submissions by learner
+  const learnerMap = {};
+
+  for (let i = 0; i < submissions.length; i++) {
+    const sub = submissions[i];
+    const { learner_id, assignment_id, submission } = sub;
+
+    const assignment = assignmentMap[assignment_id];
+    if (!assignment) continue; // skip if assignment not valid
+
+    let score = submission.score;
+    const submittedAt = new Date(submission.submitted_at);
+    const dueAt = new Date(assignment.due_at);
+
+    if (submittedAt > dueAt) {
+      score -= assignment.points_possible * 0.1; 
+    }
+
+    if (!learnerMap[learner_id]) {
+      learnerMap[learner_id] = {
+        id: learner_id,
+        totalScore: 0,
+        totalPossible: 0,
+        scores: {}
+      };
+    }
+
+    learnerMap[learner_id].totalScore += score;
+    learnerMap[learner_id].totalPossible += assignment.points_possible;
+    learnerMap[learner_id].scores[assignment_id] = +(score / assignment.points_possible);
+  }
+
   }
 
   return result;
-
+}
 
   // each assignment should have a key with its ID,
     // and the value associated with it should be the percentage that
