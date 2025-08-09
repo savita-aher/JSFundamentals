@@ -143,6 +143,20 @@ for (let i = 0; i < AssignmentGroup.assignments.length; i++) {
     learnerMap[learner_id].scores[assignment_id] = +(score / assignment.points_possible);
   }
 
+  // Format final output
+  const result = [];
+  for (const learnerId in learnerMap) {
+    const learner = learnerMap[learnerId];
+    const output = {
+      id: learner.id,
+      avg: +(learner.totalScore / learner.totalPossible * 100).toFixed(2)
+    };
+
+    for (const assignmentId in learner.scores) {
+      output[assignmentId] = learner.scores[assignmentId];
+    }
+
+    result.push(output);
   }
 
   return result;
