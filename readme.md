@@ -6,7 +6,7 @@ Develop functions to create reusable code.
 Utilize loops and iteration to navigate through data collections.
 Implement error handling to manage potential code failures gracefully.
 
-output shoulf be:
+output should be:
  const result = [
     {
       id: 125,

@@ -1,3 +1,4 @@
+// The provided course information.
 const CourseInfo = {
   id: 451,
   name: "Introduction to JavaScript"
@@ -75,26 +76,44 @@ const LearnerSubmissions = [
   }
 ];
 
-function getLearnerData(course, ag, submissions) {
-  // here, we would process this data to achieve the desired result.
-  const result = [
-    {
-      id: 125,
-      avg: 0.985, // (47 + 150) / (50 + 150)
-      1: 0.94, // 47 / 50
-      2: 1.0 // 150 / 150
-    },
-    {
-      id: 132,
-      avg: 0.82, // (39 + 125) / (50 + 150)
-      1: 0.78, // 39 / 50
-      2: 0.833 // late: (140 - 15) / 150
-    }
-  ];
+function getLearnerData(course, ag, submissions) 
+{
+  //function getLearnerData(courseInfo, assignmentGroup, submissions) {
+  // Validate course match
+  if (AssignmentGroup.course_id !== CourseInfo.id)
+ {
+    throw new Error("AssignmentGroup does not belong to the specified course.");
+  }
 
-  return result;
+
+
+  // Filter assignments that are due and validate points_possible
+  const now = new Date();
+const validAssignments = [];
+
+
+for (let i = 0; i < AssignmentGroup.assignments.length; i++) {
+  const assignment = AssignmentGroup.assignments[i];
+  const dueDate = new Date(assignment.due_at);
+
+  // Compare full date objects directly
+  if (dueDate.getTime() <= now.getTime()) {
+    if (typeof assignment.points_possible === "number" && assignment.points_possible > 0) {
+      validAssignments.push(assignment);
+    }
+  }
 }
 
-const result = getLearnerData(CourseInfo, AssignmentGroup, LearnerSubmissions);
+  
+  }
 
+  return result;
+
+
+  // each assignment should have a key with its ID,
+    // and the value associated with it should be the percentage that
+    // the learner scored on the assignment (submission.score / points_possible)
+    // if an assignment is not yet due, it should not be included in either
+    // the average or the keyed dictionary of scores
+const result = getLearnerData(CourseInfo, AssignmentGroup, LearnerSubmissions);
 console.log(result);
