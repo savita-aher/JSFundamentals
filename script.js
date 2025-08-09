@@ -80,23 +80,30 @@ function getLearnerData(course, ag, submissions)
 {
   //function getLearnerData(courseInfo, assignmentGroup, submissions) {
   // Validate course match
-  if (AssignmentGroup.course_id !== CourseInfo.id)
- {
+  try {
+  if (AssignmentGroup.course_id !== CourseInfo.id) {
     throw new Error("AssignmentGroup does not belong to the specified course.");
   }
 
+  // Continue with the rest of your logic here...
 
+} catch (error) {
+  console.error("Validation error:", error.message);
+  // Optionally handle the error 
+}
 
-  // Filter assignments that are due and validate points_possible
+// Filter assignments that are due and validate points_possible
   const now = new Date();
 const validAssignments = [];
-
-
 for (let i = 0; i < AssignmentGroup.assignments.length; i++) {
   const assignment = AssignmentGroup.assignments[i];
   const dueDate = new Date(assignment.due_at);
 
   // Compare full date objects directly
+  //use of getTime() 
+ //It converts a Date object into a numeric timestamp.
+ //This makes it easy to compare two dates using simple math
+
   if (dueDate.getTime() <= now.getTime()) {
     if (typeof assignment.points_possible === "number" && assignment.points_possible > 0) {
       validAssignments.push(assignment);
@@ -144,28 +151,25 @@ for (let i = 0; i < AssignmentGroup.assignments.length; i++) {
   }
 
   // Format final output
-  const result = [];
-  for (const learnerId in learnerMap) {
-    const learner = learnerMap[learnerId];
-    const output = {
-      id: learner.id,
-      avg: +(learner.totalScore / learner.totalPossible ).toFixed(2)
-    };
+ const result = [];
 
-    for (const assignmentId in learner.scores) {
-      output[assignmentId] = learner.scores[assignmentId];
-    }
+for (const learnerId in learnerMap) {
+  const learner = learnerMap[learnerId];
 
-    result.push(output);
+  const output = {
+    id: learner.id,
+    avg: +(learner.totalScore / learner.totalPossible)
   }
 
-  return result;
+  for (const assignmentId in learner.scores) {
+    output[assignmentId] = learner.scores[assignmentId];
+  }
+
+  result.push(output);
 }
 
-  // each assignment should have a key with its ID,
-    // and the value associated with it should be the percentage that
-    // the learner scored on the assignment (submission.score / points_possible)
-    // if an assignment is not yet due, it should not be included in either
-    // the average or the keyed dictionary of scores
+return result;
+}
+
 const result = getLearnerData(CourseInfo, AssignmentGroup, LearnerSubmissions);
 console.log(result);
